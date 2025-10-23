@@ -1,0 +1,12 @@
+
+first_string = '0,1,2,3,4,5,6,7,8,9,10,11,12,,13,14'
+first_list = first_string.split(',,')
+req_list = first_list[0]
+our_list = first_list[1]
+
+data_list = req_list.split(',')
+extra_list = our_list.split(',')
+data_list.append(extra_list[0])
+data_list.append(extra_list[1])
+print(data_list)
+
