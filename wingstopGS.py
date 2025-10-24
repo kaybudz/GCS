@@ -112,17 +112,17 @@ class Ui_MainWindow():
         self.tilt.showGrid(x=True, y=True)
         
         # Code for live graph
-        self.tilt.setYRange(0, 10)
+        self.tilt.setYRange(0, 100)
         self.time = list(range(10))
         self.roll = [self.roll_list[-1] for _ in range(10)]
         self.pitch = [self.pitch_list[-1] for _ in range(10)]
         self.yaw = [self.yaw_list[-1] for _ in range(10)]
         
         # adding a legend
-        self.tilt.addLegend(offset=(0,0))
+        self.tilt.addLegend(offset=(1,1))
         legend = LegendItem()                      
         legend.setParentItem(self.tilt.graphicsItem()) 
-        legend.anchor((1, 0), (1, 0))                
+        legend.anchor((0, 1), (0, 1))                
         self.roll_curve = self.tilt.plot(self.time, self.roll, pen='r', name='Gyro Roll')
         self.pitch_curve = self.tilt.plot(self.time, self.pitch, pen='g', name='Gyro Pitch')
         self.yaw_curve = self.tilt.plot(self.time, self.yaw, pen='b', name='Gyro Yaw')
@@ -182,14 +182,23 @@ class Ui_MainWindow():
         self.webView.setHtml(html)      
 
         # adding wingstop logo
-        logo_layout = QtWidgets.QFrame(self.centralwidget)
-        logo_layout.setGeometry(QtCore.QRect(26, 26, 470, 285))
-        logo_layout.setStyleSheet('border: 10px solid black')
-        logo_pixmap = QtGui.QPixmap("C:/Users/kayla/Downloads/wingstop_logo.png")
-        logo_width, logo_height = 450, 450
-        logo_pixmap = logo_pixmap.scaled(logo_width, logo_height, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
-        logo_label = QtWidgets.QLabel(logo_layout)
-        logo_label.setPixmap(logo_pixmap)
+        self.logo_layout = QtWidgets.QFrame(self.centralwidget)
+        self.logo_layout.setGeometry(QtCore.QRect(26, 26, 470, 285))
+        self.logo_layout.setStyleSheet('border: 10px solid black')
+        self.logo_pixmap = QtGui.QPixmap("C:/Users/kayla/Downloads/wingstop_logo.png")
+        self.logo_width, self.logo_height = 450, 450
+        self.logo_pixmap = self.logo_pixmap.scaled(self.logo_width, self.logo_height, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+        self.logo_label = QtWidgets.QLabel(self.logo_layout)
+        self.logo_label.setPixmap(self.logo_pixmap)
+
+        # party after clicking logo
+        self.logo_button = QtWidgets.QPushButton(self.centralwidget)
+        self.logo_button.setGeometry(QtCore.QRect(26, 26, 470, 285))
+        self.logo_button.setStyleSheet("background-color: transparent")
+        self.logo_button.setObjectName("party")
+        #self.logo_layout.addWidget(self.logo_button)
+        #self.logo.setFont(self.button_font)
+        self.logo_button.clicked.connect(self.party) 
         
         # adding wingstop quote
         self.slogan_layout = QtWidgets.QFrame(self.centralwidget)
@@ -205,32 +214,32 @@ class Ui_MainWindow():
         wing1_pixmap = QtGui.QPixmap("C:/Users/kayla/Python311/GCS/wheres_little_wing.png")
         wing1_width, wing1_height = 100, 100
         wing1_pixmap = wing1_pixmap.scaled(wing1_width, wing1_height, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
-        wing1_label = QtWidgets.QLabel(wing1_layout)
-        wing1_label.setPixmap(wing1_pixmap)
+        self.wing1_label = QtWidgets.QLabel(wing1_layout)
+        self.wing1_label.setPixmap(wing1_pixmap)
 
         wing2_layout = QtWidgets.QFrame(self.centralwidget)
         wing2_layout.setGeometry(QtCore.QRect(600, 26, 100, 100))
         wing2_pixmap = QtGui.QPixmap("C:/Users/kayla/Python311/GCS/wheres_little_wing.png")
         wing2_width, wing2_height = 100, 100
         wing2_pixmap = wing2_pixmap.scaled(wing2_width, wing2_height, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
-        wing2_label = QtWidgets.QLabel(wing2_layout)
-        wing2_label.setPixmap(wing2_pixmap)
+        self.wing2_label = QtWidgets.QLabel(wing2_layout)
+        self.wing2_label.setPixmap(wing2_pixmap)
 
         wing3_layout = QtWidgets.QFrame(self.centralwidget)
         wing3_layout.setGeometry(QtCore.QRect(1700, 26, 100, 100))
         wing3_pixmap = QtGui.QPixmap("C:/Users/kayla/Python311/GCS/wheres_little_wing.png")
         wing3_width, wing3_height = 100, 100
         wing3_pixmap = wing3_pixmap.scaled(wing3_width, wing3_height, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
-        wing3_label = QtWidgets.QLabel(wing3_layout)
-        wing3_label.setPixmap(wing3_pixmap)
+        self.wing3_label = QtWidgets.QLabel(wing3_layout)
+        self.wing3_label.setPixmap(wing3_pixmap)
 
         wing4_layout = QtWidgets.QFrame(self.centralwidget)
         wing4_layout.setGeometry(QtCore.QRect(1800, 26, 100, 100))
         wing4_pixmap = QtGui.QPixmap("C:/Users/kayla/Python311/GCS/wheres_little_wing.png")
         wing4_width, wing4_height = 100, 100
         wing4_pixmap = wing4_pixmap.scaled(wing4_width, wing4_height, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
-        wing4_label = QtWidgets.QLabel(wing4_layout)
-        wing4_label.setPixmap(wing4_pixmap)
+        self.wing4_label = QtWidgets.QLabel(wing4_layout)
+        self.wing4_label.setPixmap(wing4_pixmap)
 
         # creating button frame
         self.button_frame = QtWidgets.QFrame(self.centralwidget)
@@ -464,6 +473,10 @@ class Ui_MainWindow():
             self.ser.write(self.release_string.encode('utf-8'))
         print('calibrate was clicked')
         self.calibrate.setStyleSheet("background-color : brown")
+
+    def party(self):
+        print('party time!')
+        # DO SOMETHING FUN
 
     # updating information lists
     def update_information(self):
