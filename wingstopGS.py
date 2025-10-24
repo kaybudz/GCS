@@ -47,6 +47,7 @@ class Ui_MainWindow():
         self.graph_frame = QtWidgets.QFrame(self.centralwidget)
         self.graph_frame.setGeometry(QtCore.QRect(512, 212, 1373, 841))
         self.graph_frame.setObjectName("graph_frame")
+        self.graph_frame.setStyleSheet('border: 10px solid black')
 
         # creating layout of graphs
         self.gridLayout = QtWidgets.QGridLayout(self.graph_frame)
@@ -182,20 +183,54 @@ class Ui_MainWindow():
 
         # adding wingstop logo
         logo_layout = QtWidgets.QFrame(self.centralwidget)
-        logo_layout.setGeometry(QtCore.QRect(36, 36, 450, 450))
+        logo_layout.setGeometry(QtCore.QRect(26, 26, 470, 285))
+        logo_layout.setStyleSheet('border: 10px solid black')
         logo_pixmap = QtGui.QPixmap("C:/Users/kayla/Downloads/wingstop_logo.png")
         logo_width, logo_height = 450, 450
         logo_pixmap = logo_pixmap.scaled(logo_width, logo_height, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
         logo_label = QtWidgets.QLabel(logo_layout)
         logo_label.setPixmap(logo_pixmap)
-
+        
         # adding wingstop quote
         self.slogan_layout = QtWidgets.QFrame(self.centralwidget)
-        self.slogan_layout.setGeometry(QtCore.QRect(512, 56, 1373, 100))
+        self.slogan_layout.setGeometry(QtCore.QRect(720, 46, 1373, 100))
         self.sloganLabel = QtWidgets.QLabel(self.slogan_layout)
         self.sloganLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.sloganLabel.setStyleSheet('color: white; font-weight: bold; font-family: Roc Grotesk; font-size: 30pt;')
         self.sloganLabel.setText("Wing-Stop Don't Stop! Go Little Wing!")
+
+        # adding chicken wings
+        wing1_layout = QtWidgets.QFrame(self.centralwidget)
+        wing1_layout.setGeometry(QtCore.QRect(500, 26, 100, 100))
+        wing1_pixmap = QtGui.QPixmap("C:/Users/kayla/Python311/GCS/wheres_little_wing.png")
+        wing1_width, wing1_height = 100, 100
+        wing1_pixmap = wing1_pixmap.scaled(wing1_width, wing1_height, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+        wing1_label = QtWidgets.QLabel(wing1_layout)
+        wing1_label.setPixmap(wing1_pixmap)
+
+        wing2_layout = QtWidgets.QFrame(self.centralwidget)
+        wing2_layout.setGeometry(QtCore.QRect(600, 26, 100, 100))
+        wing2_pixmap = QtGui.QPixmap("C:/Users/kayla/Python311/GCS/wheres_little_wing.png")
+        wing2_width, wing2_height = 100, 100
+        wing2_pixmap = wing2_pixmap.scaled(wing2_width, wing2_height, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+        wing2_label = QtWidgets.QLabel(wing2_layout)
+        wing2_label.setPixmap(wing2_pixmap)
+
+        wing3_layout = QtWidgets.QFrame(self.centralwidget)
+        wing3_layout.setGeometry(QtCore.QRect(1700, 26, 100, 100))
+        wing3_pixmap = QtGui.QPixmap("C:/Users/kayla/Python311/GCS/wheres_little_wing.png")
+        wing3_width, wing3_height = 100, 100
+        wing3_pixmap = wing3_pixmap.scaled(wing3_width, wing3_height, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+        wing3_label = QtWidgets.QLabel(wing3_layout)
+        wing3_label.setPixmap(wing3_pixmap)
+
+        wing4_layout = QtWidgets.QFrame(self.centralwidget)
+        wing4_layout.setGeometry(QtCore.QRect(1800, 26, 100, 100))
+        wing4_pixmap = QtGui.QPixmap("C:/Users/kayla/Python311/GCS/wheres_little_wing.png")
+        wing4_width, wing4_height = 100, 100
+        wing4_pixmap = wing4_pixmap.scaled(wing4_width, wing4_height, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+        wing4_label = QtWidgets.QLabel(wing4_layout)
+        wing4_label.setPixmap(wing4_pixmap)
 
         # creating button frame
         self.button_frame = QtWidgets.QFrame(self.centralwidget)
@@ -205,6 +240,7 @@ class Ui_MainWindow():
         self.button_frame.setObjectName("button_frame")
         self.button_font = QtGui.QFont('Roc Grotesk', 14)
         self.button_font.setBold
+        self.button_frame.setStyleSheet('border: 10px solid black')
 
         # creating layout for buttons
         self.button_layout = QtWidgets.QHBoxLayout(self.button_frame)
@@ -235,9 +271,12 @@ class Ui_MainWindow():
         self.release.clicked.connect(self.release_was_clicked) 
 
         # creating table for live data
+        self.table_frame = QtWidgets.QTableWidget(self.centralwidget)
+        self.table_frame.setGeometry(QtCore.QRect(26, 326, 470, 726))
+        self.table_frame.setStyleSheet('border: 10px solid black')
         self.tableWidget = QtWidgets.QTableWidget(self.centralwidget)
         self.tableWidget.verticalHeader().setStyleSheet("""QHeaderView::section {font-size: 10pt; font-family: 'Roc Grotesk'; font-weight: bold; padding: 4px; }""")
-        self.tableWidget.setStyleSheet('background color: white')
+        self.tableWidget.setStyleSheet('background color: white;')
         self.tableWidget.setGeometry(QtCore.QRect(36, 336, 450, 706)) 
         self.tableWidget.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         self.tableWidget.horizontalHeader().setStretchLastSection(True)
@@ -273,23 +312,22 @@ class Ui_MainWindow():
         self.tableWidget.setItem(0, 2, QtWidgets.QTableWidgetItem(str(self.packet_list[-1])))
         self.tableWidget.setFont(self.table_font)
         
-        # CHANGE TO AIR SPEED??
-        # packets recieved
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setVerticalHeaderItem(3, item)
-        self.tableWidget.setItem(0, 3, QtWidgets.QTableWidgetItem('0'))
-        self.tableWidget.setFont(self.table_font)
-
         # software state
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setVerticalHeaderItem(4, item)
-        self.tableWidget.setItem(0, 4, QtWidgets.QTableWidgetItem(self.sw_list[-1]))
+        self.tableWidget.setItem(0, 3, QtWidgets.QTableWidgetItem(self.sw_list[-1]))
         self.tableWidget.setFont(self.table_font)
         
         # payload state
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setVerticalHeaderItem(5, item)
-        self.tableWidget.setItem(0, 5, QtWidgets.QTableWidgetItem(self.pl_list[-1]))
+        self.tableWidget.setItem(0, 4, QtWidgets.QTableWidgetItem(self.pl_list[-1]))
+        self.tableWidget.setFont(self.table_font)
+
+        # air speed
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget.setVerticalHeaderItem(3, item)
+        self.tableWidget.setItem(0, 5, QtWidgets.QTableWidgetItem(str(self.speed_list[-1])))
         self.tableWidget.setFont(self.table_font)
         
         # altitude
@@ -373,27 +411,27 @@ class Ui_MainWindow():
         item = self.tableWidget.verticalHeaderItem(2)
         item.setText(_translate("MainWindow", "Packet Count"))
         item = self.tableWidget.verticalHeaderItem(3)
-        item.setText(_translate("MainWindow", "Packets Recieved"))
-        item = self.tableWidget.verticalHeaderItem(4)
         item.setText(_translate("MainWindow", "Software State"))
-        item = self.tableWidget.verticalHeaderItem(5)
+        item = self.tableWidget.verticalHeaderItem(4)
         item.setText(_translate("MainWindow", "Payload State"))
+        item = self.tableWidget.verticalHeaderItem(5)
+        item.setText(_translate("MainWindow", "Velocity (m/s)"))
         item = self.tableWidget.verticalHeaderItem(6)
-        item.setText(_translate("MainWindow", "Altitude"))
+        item.setText(_translate("MainWindow", "Altitude (m)"))
         item = self.tableWidget.verticalHeaderItem(7)
-        item.setText(_translate("MainWindow", "Temperature"))
+        item.setText(_translate("MainWindow", "Temperature (°C)"))
         item = self.tableWidget.verticalHeaderItem(8)
-        item.setText(_translate("MainWindow", "Voltage"))
+        item.setText(_translate("MainWindow", "Voltage (V)"))
         item = self.tableWidget.verticalHeaderItem(9)
-        item.setText(_translate("MainWindow", "Latitude"))
+        item.setText(_translate("MainWindow", "Latitude (°N)"))
         item = self.tableWidget.verticalHeaderItem(10)
-        item.setText(_translate("MainWindow", "Longitude"))
+        item.setText(_translate("MainWindow", "Longitude (°E)"))
         item = self.tableWidget.verticalHeaderItem(11)
-        item.setText(_translate("MainWindow", "Gyro Roll"))
+        item.setText(_translate("MainWindow", "Gyro Roll (°)"))
         item = self.tableWidget.verticalHeaderItem(12)
-        item.setText(_translate("MainWindow", "Gyro Pitch"))
+        item.setText(_translate("MainWindow", "Gyro Pitch (°)"))
         item = self.tableWidget.verticalHeaderItem(13)
-        item.setText(_translate("MainWindow", "Gyro Yaw"))
+        item.setText(_translate("MainWindow", "Gyro Yaw (°)"))
         item = self.tableWidget.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "Data"))
     
@@ -409,6 +447,7 @@ class Ui_MainWindow():
         self.timer.timeout.connect(self.update_widgets)
         self.timer.start()
         self.update_information()
+        self.beacon.setStyleSheet("background-color : brown")
 
     # release button function
     def release_was_clicked(self):
@@ -416,6 +455,7 @@ class Ui_MainWindow():
             self.release_string = 'lemon pepper'
             self.ser.write(self.release_string.encode('utf-8'))
         print('release was clicked')
+        self.release.setStyleSheet("background-color : brown")
     
     # calibration button function
     def calibrate_was_clicked(self):
@@ -423,6 +463,7 @@ class Ui_MainWindow():
             self.release_string = 'hot honey'
             self.ser.write(self.release_string.encode('utf-8'))
         print('calibrate was clicked')
+        self.calibrate.setStyleSheet("background-color : brown")
 
     # updating information lists
     def update_information(self):
