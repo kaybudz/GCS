@@ -111,7 +111,7 @@ class Ui_MainWindow():
         self.tilt.showGrid(x=True, y=True)
         
         # Code for live graph
-        self.tilt.setYRange(0, 100)
+        self.tilt.setYRange(0, 10)
         self.time = list(range(10))
         self.roll = [self.roll_list[-1] for _ in range(10)]
         self.pitch = [self.pitch_list[-1] for _ in range(10)]
@@ -401,7 +401,7 @@ class Ui_MainWindow():
     def start_serial_read(self):
         self.start_serial_read = True
         print ('start serial was clicked')
-        self.ser = serial.Serial('COM18', 9600, timeout = 2)
+        self.ser = serial.Serial('COM13', 9600, timeout = 2)
 
         # initializing timer
         self.timer = QtCore.QTimer()
@@ -412,14 +412,14 @@ class Ui_MainWindow():
 
     # release button function
     def release_was_clicked(self):
-        with serial.Serial('COM18', 9600, timeout = 2) as ser:
+        with self.ser:
             self.release_string = 'lemon pepper'
             self.ser.write(self.release_string.encode('utf-8'))
         print('release was clicked')
     
     # calibration button function
     def calibrate_was_clicked(self):
-        with serial.Serial('COM18', 9600, timeout = 2) as ser:
+        with self.ser:
             self.release_string = 'hot honey'
             self.ser.write(self.release_string.encode('utf-8'))
         print('calibrate was clicked')
@@ -428,7 +428,6 @@ class Ui_MainWindow():
     def update_information(self):
         with self.ser:
             if self.start_serial_read == True:    
-                print('serial read is started')  
                 data = self.ser.readline().decode('UTF-8', errors='ignore').strip()
 
                 # getting information into a single list
@@ -443,6 +442,7 @@ class Ui_MainWindow():
 
                     # separating main data list into individual lists
                     if len(data_list) >= 15:
+                        print('data is updating')
                         self.team_list.append(int(data_list[0]))
                         self.mission_list.append(data_list[1])
                         self.packet_list.append(int(data_list[2]))
@@ -461,6 +461,9 @@ class Ui_MainWindow():
     
     # function to update widgets
     def update_widgets(self):
+
+        # update information
+        self.update_information()
 
         # update time
         self.time = self.time[1:]
