@@ -28,25 +28,25 @@ class Ui_MainWindow():
         MainWindow.setStyleSheet("background-color: green;")
         MainWindow.setAutoFillBackground(True)
 
+        # initializing serial
+        self.ser = False
+
         # establish lists for variables 
-        self.team_list = ['0']
+        self.team_list = [0]
         self.mission_list = ['0']
-        self.packet_list = ['0']
+        self.packet_list = [0]
         self.sw_list = ['0']
         self.pl_list = ['0']
-        self.altitude_list = ['0']
-        self.temperature_list = ['0']
-        self.voltage_list = ['0']
-        self.latitude_list = ['0']
-        self.longitude_list = ['0']
-        self.roll_list = ['0']
-        self.pitch_list = ['0']
-        self.yaw_list = ['0']
-        self.pressure_list = ['0']
-        self.speed_list = ['0']
-        
-        # starting serial 
-        #self.start_serial()
+        self.altitude_list = [0]
+        self.temperature_list = [0]
+        self.voltage_list = [0]
+        self.latitude_list = [0]
+        self.longitude_list = [0]
+        self.roll_list = [0]
+        self.pitch_list = [0]
+        self.yaw_list = [0]
+        self.pressure_list = [0]
+        self.speed_list = [0]
 
         # creating graph frame
         self.graph_frame = QtWidgets.QFrame(self.centralwidget)
@@ -63,12 +63,6 @@ class Ui_MainWindow():
         self.header_font.setBold
         self.label_font = QtGui.QFont('Roc Grotesk', 10)
         self.label_font.setBold
-
-        # timer to show readings for graphs NOT THE SAME AS MISSION TIME
-        self.timer = QtCore.QTimer()
-        self.timer.setInterval(300)
-        self.timer.timeout.connect(self.update_widgets)
-        self.timer.start()
 
         # altitude graph
         self.altitude = PlotWidget(self.graph_frame)
@@ -227,7 +221,7 @@ class Ui_MainWindow():
         self.beacon.setObjectName("beacon")
         self.button_layout.addWidget(self.beacon)
         self.beacon.setFont(self.button_font)
-        #self.beacon.clicked.connect() # ADD FUNCTION FOR WHEN BUTTON IS CLICKED
+        self.beacon.clicked.connect(self.start_serial_read) # ADD FUNCTION FOR WHEN BUTTON IS CLICKED
 
         # calibrate button
         self.calibrate = QtWidgets.QPushButton(self.button_frame)
@@ -270,28 +264,25 @@ class Ui_MainWindow():
         self.table_font.setBold
 
         # updating information
-        self.update_information()
+        #self.update_information()
 
         # team ID
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setVerticalHeaderItem(0, item)
-        self.tableWidget.setItem(0, 0, QtWidgets.QTableWidgetItem(self.team_list[-1]))
+        self.tableWidget.setItem(0, 0, QtWidgets.QTableWidgetItem(str(self.team_list[-1])))
         self.tableWidget.setFont(self.table_font)
-        #self.tableWidget.setItem(0, 0, QtWidgets.QTableWidgetItem(self.team_list[-1]))
         
         # mission time
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setVerticalHeaderItem(1, item)
         self.tableWidget.setItem(0, 1, QtWidgets.QTableWidgetItem(self.mission_list[-1]))
         self.tableWidget.setFont(self.table_font)
-        #self.tableWidget.setItem(0, 0, QtWidgets.QTableWidgetItem(self.mission_list[-1]))
 
         # packet count
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setVerticalHeaderItem(2, item)
-        self.tableWidget.setItem(0, 2, QtWidgets.QTableWidgetItem(self.packet_list[-1]))
+        self.tableWidget.setItem(0, 2, QtWidgets.QTableWidgetItem(str(self.packet_list[-1])))
         self.tableWidget.setFont(self.table_font)
-        #self.tableWidget.setItem(0, 0, QtWidgets.QTableWidgetItem(self.packet_list[-1]))
         
         # CHANGE TO AIR SPEED??
         # packets recieved
@@ -305,70 +296,60 @@ class Ui_MainWindow():
         self.tableWidget.setVerticalHeaderItem(4, item)
         self.tableWidget.setItem(0, 4, QtWidgets.QTableWidgetItem(self.sw_list[-1]))
         self.tableWidget.setFont(self.table_font)
-        #self.tableWidget.setItem(0, 0, QtWidgets.QTableWidgetItem(self.sw_list[-1]))
         
         # payload state
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setVerticalHeaderItem(5, item)
         self.tableWidget.setItem(0, 5, QtWidgets.QTableWidgetItem(self.pl_list[-1]))
         self.tableWidget.setFont(self.table_font)
-        #self.tableWidget.setItem(0, 0, QtWidgets.QTableWidgetItem(self.pl_list[-1]))
         
         # altitude
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setVerticalHeaderItem(6, item)
-        self.tableWidget.setItem(0, 6, QtWidgets.QTableWidgetItem(self.altitude_list[-1]))
+        self.tableWidget.setItem(0, 6, QtWidgets.QTableWidgetItem(str(self.altitude_list[-1])))
         self.tableWidget.setFont(self.table_font)
-        #self.tableWidget.setItem(0, 0, QtWidgets.QTableWidgetItem(self.altitude_list[-1]))
 
         # temperature
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setVerticalHeaderItem(7, item)
-        self.tableWidget.setItem(0, 7, QtWidgets.QTableWidgetItem(self.temperature_list[-1]))
+        self.tableWidget.setItem(0, 7, QtWidgets.QTableWidgetItem(str(self.temperature_list[-1])))
         self.tableWidget.setFont(self.table_font)
-        #self.tableWidget.setItem(0, 0, QtWidgets.QTableWidgetItem(self.temperature_list[-1]))
         
         # voltage
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setVerticalHeaderItem(8, item)
-        self.tableWidget.setItem(0, 8, QtWidgets.QTableWidgetItem(self.voltage_list[-1]))
+        self.tableWidget.setItem(0, 8, QtWidgets.QTableWidgetItem(str(self.voltage_list[-1])))
         self.tableWidget.setFont(self.table_font)
-        #self.tableWidget.setItem(0, 0, QtWidgets.QTableWidgetItem(self.voltage_list[-1]))
         
         # latitude
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setVerticalHeaderItem(9, item)
-        self.tableWidget.setItem(0, 9, QtWidgets.QTableWidgetItem(self.latitude_list[-1]))
+        self.tableWidget.setItem(0, 9, QtWidgets.QTableWidgetItem(str(self.latitude_list[-1])))
         self.tableWidget.setFont(self.table_font)
-        #self.tableWidget.setItem(0, 0, QtWidgets.QTableWidgetItem(self.latitude_list[-1]))
         
         # longitude
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setVerticalHeaderItem(10, item)
-        self.tableWidget.setItem(0, 10, QtWidgets.QTableWidgetItem(self.longitude_list[-1]))
+        self.tableWidget.setItem(0, 10, QtWidgets.QTableWidgetItem(str(self.longitude_list[-1])))
         self.tableWidget.setFont(self.table_font)
-        #self.tableWidget.setItem(0, 0, QtWidgets.QTableWidgetItem(self.longitude_list[-1]))
         
         # gyro roll
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setVerticalHeaderItem(11, item)
-        self.tableWidget.setItem(0, 11, QtWidgets.QTableWidgetItem(self.roll_list[-1]))
+        self.tableWidget.setItem(0, 11, QtWidgets.QTableWidgetItem(str(self.roll_list[-1])))
         self.tableWidget.setFont(self.table_font)
-        #self.tableWidget.setItem(0, 0, QtWidgets.QTableWidgetItem(self.roll_list[-1]))
         
         # gyro pitch
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setVerticalHeaderItem(12, item)
-        self.tableWidget.setItem(0, 12, QtWidgets.QTableWidgetItem(self.pitch_list[-1]))
+        self.tableWidget.setItem(0, 12, QtWidgets.QTableWidgetItem(str(self.pitch_list[-1])))
         self.tableWidget.setFont(self.table_font)
-        #self.tableWidget.setItem(0, 0, QtWidgets.QTableWidgetItem(self.pitch_list[-1]))
         
         # gyro yaw
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setVerticalHeaderItem(13, item)
-        self.tableWidget.setItem(0, 13, QtWidgets.QTableWidgetItem(self.yaw_list[-1]))
+        self.tableWidget.setItem(0, 13, QtWidgets.QTableWidgetItem(str(self.yaw_list[-1])))
         self.tableWidget.setFont(self.table_font)
-        #self.tableWidget.setItem(0, 0, QtWidgets.QTableWidgetItem(self.yaw_list[-1]))
         
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(0, item)
@@ -428,35 +409,46 @@ class Ui_MainWindow():
         item = self.tableWidget.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "Data"))
     
+    # start serial button function
+    # HAVE DIEGO LOOK AT THIS BASED ON THE CODE CHANGES STEVEN MADE AND ASK IF IT SHOULD BE WHILE TRUE LOOP AGAIN
+    def start_serial_read(self):
+        self.start_serial_read = True
+        print ('start serial was clicked')
+        self.ser = serial.Serial('COM18', 9600, timeout = 2)
+        # timer to show readings for graphs NOT THE SAME AS MISSION TIME
+        self.timer = QtCore.QTimer()
+        self.timer.setInterval(300) # MAKE SURE THIS INTERVAL IS OK
+        self.timer.timeout.connect(self.update_widgets)
+        self.timer.start()
+        self.update_information()
+
     # release button function
     def release_was_clicked(self):
-        with serial.Serial('COM13', 9600, timeout = 2) as ser:
+        with serial.Serial('COM18', 9600, timeout = 2) as ser:
             self.release_string = 'lemon pepper'
-            ser.write(self.release_string.encode('utf-8'))
+            self.ser.write(self.release_string.encode('utf-8'))
         print('release was clicked')
     
     # calibration button function
     def calibrate_was_clicked(self):
-        with serial.Serial('COM13', 9600, timeout = 2) as ser:
+        with serial.Serial('COM18', 9600, timeout = 2) as ser:
             self.release_string = 'hot honey'
-            ser.write(self.release_string.encode('utf-8'))
+            self.ser.write(self.release_string.encode('utf-8'))
         print('calibrate was clicked')
 
-    # start serial button function
-    # HAVE DIEGO LOOK AT THIS BASED ON THE CODE CHANGES STEVEN MADE AND ASK IF IT SHOULD BE WHILE TRUE LOOP AGAIN
-    def serial_was_clicked(self):
-        self.start_serial_read = True
-        print ('start serial was clicked')
-
+    #breakpoint()
     # updating information lists
     def update_information(self):
-        #print('function is running')
-        with serial.Serial('COM13', 9600, timeout = 2) as ser:
-            if self.start_serial_read is True: # this may not work but comment back in when we test with actual data
-                data = ser.readline().decode('UTF-8', errors='ignore').strip()
-
+        #breakpoint()
+        print('function is running')
+        with self.ser:
+            if self.start_serial_read == True: # this may not work but comment back in when we test with actual data    
+                print('serial read is started')  
+                data = self.ser.readline().decode('UTF-8', errors='ignore').strip()
+                #breakpoint()
                 # getting information into a single list
                 if data is not None:
+                    #breakpoint()
                     first_list = data.split(',,')
                     req_list = first_list[0]
                     our_list = first_list[1]
@@ -464,30 +456,33 @@ class Ui_MainWindow():
                     extra_list = our_list.split(',')
                     data_list.append(extra_list[0])
                     data_list.append(extra_list[1])
-                    print(data_list)
+                    #print(data_list)
 
                     # separating main data list into individual lists
                     if len(data_list) >= 15:
-                        self.team_list.append(data_list[0])
+                        #breakpoint()
+                        self.team_list.append(int(data_list[0]))
                         self.mission_list.append(data_list[1])
-                        self.packet_list.append(data_list[2])
+                        self.packet_list.append(int(data_list[2]))
                         self.sw_list.append(data_list[3])
                         self.pl_list.append(data_list[4])
-                        self.altitude_list.append(data_list[5])
-                        self.temperature_list.append(data_list[6])
-                        self.voltage_list.append(data_list[7])
-                        self.latitude_list.append(data_list[8])
-                        self.longitude_list.append(data_list[9])
-                        self.roll_list.append(data_list[10])
-                        self.pitch_list.append(data_list[11])
-                        self.yaw_list.append(data_list[12])
-                        self.pressure_list.append(data_list[13])
-                        self.speed_list.append(data_list[14])
+                        self.altitude_list.append(int(data_list[5]))
+                        self.temperature_list.append(int(data_list[6]))
+                        self.voltage_list.append(int(data_list[7]))
+                        self.latitude_list.append(int(data_list[8]))
+                        self.longitude_list.append(int(data_list[9]))
+                        self.roll_list.append(int(data_list[10]))
+                        self.pitch_list.append(int(data_list[11]))
+                        self.yaw_list.append(int(data_list[12]))
+                        self.pressure_list.append(int(data_list[13]))
+                        self.speed_list.append(int(data_list[14]))
 
     # update live plots
+    #breakpoint()
     def update_widgets(self):
+        # breakpoint()
         # create lists for data to append to
-        # TEAM_ID, MISSION_TIME, PACKET_COUNT, SW_STATE, PL_STATE, ALTITUDE, TEMP, VOLTAGE, GPS_LATITUDE, GPS_LONGITUDE, GYRO_R, GYRO_P,  GYRO_Y
+        # TEAM_ID, MISSION_TIME, PACKET_COUNT, SW_STATE, PL_STATE, ALTITUDE, TEMP, VOLTAGE, GPS_LATITUDE, GPS_LONGITUDE, GYRO_R, GYRO_P,  GYRO_Y,, PRESSURE, SPEED
 
         # update time
         self.time = self.time[1:]
@@ -533,6 +528,21 @@ class Ui_MainWindow():
         self.webView.setHtml(html)
         # self.latitude.append(self.latitude[-1])
         # self.longitude.append(self.longitude[-1])
+
+        self.tableWidget.setItem(0, 0, QtWidgets.QTableWidgetItem(str(self.team_list[-1])))
+        self.tableWidget.setItem(0, 1, QtWidgets.QTableWidgetItem(self.mission_list[-1]))
+        self.tableWidget.setItem(0, 2, QtWidgets.QTableWidgetItem(str(self.packet_list[-1])))
+        self.tableWidget.setItem(0, 3, QtWidgets.QTableWidgetItem('0'))
+        self.tableWidget.setItem(0, 4, QtWidgets.QTableWidgetItem(self.sw_list[-1]))
+        self.tableWidget.setItem(0, 5, QtWidgets.QTableWidgetItem(self.pl_list[-1]))
+        self.tableWidget.setItem(0, 6, QtWidgets.QTableWidgetItem(str(self.altitude_list[-1])))
+        self.tableWidget.setItem(0, 7, QtWidgets.QTableWidgetItem(str(self.temperature_list[-1])))
+        self.tableWidget.setItem(0, 8, QtWidgets.QTableWidgetItem(str(self.voltage_list[-1])))
+        self.tableWidget.setItem(0, 9, QtWidgets.QTableWidgetItem(str(self.latitude_list[-1])))
+        self.tableWidget.setItem(0, 10, QtWidgets.QTableWidgetItem(str(self.longitude_list[-1])))
+        self.tableWidget.setItem(0, 11, QtWidgets.QTableWidgetItem(str(self.roll_list[-1])))
+        self.tableWidget.setItem(0, 12, QtWidgets.QTableWidgetItem(str(self.pitch_list[-1])))
+        self.tableWidget.setItem(0, 13, QtWidgets.QTableWidgetItem(str(self.yaw_list[-1])))
     
     # CSV packet format
     # TEAM_ID(0), MISSION_TIME(1), PACKET_COUNT(2), SW_STATE(3), PL_STATE(4), ALTITUDE(5), TEMP(6), VOLTAGE(7), GPS_LATITUDE(8), GPS_LONGITUDE(9), 
