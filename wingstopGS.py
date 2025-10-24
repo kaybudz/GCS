@@ -1,5 +1,4 @@
 # GROUND STATION CODE EDITED TO TAKE IN LIVE DATA
-# Test
 
 # importing necessary libraries
 from random import randint
@@ -8,12 +7,8 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView
 from pyqtgraph import PlotWidget, mkPen, LegendItem
 from offline_folium import offline
 import folium
-#import numpy
 from io import BytesIO
 import serial
-#import threading
-#import os
-import pdb
 
 # creating main window for ground station
 class Ui_MainWindow():
@@ -50,7 +45,6 @@ class Ui_MainWindow():
 
         # creating graph frame
         self.graph_frame = QtWidgets.QFrame(self.centralwidget)
-        # self.graph_frame.setGeometry(QtCore.QRect(582, 156, 1303, 811))
         self.graph_frame.setGeometry(QtCore.QRect(512, 212, 1373, 841))
         self.graph_frame.setObjectName("graph_frame")
 
@@ -74,10 +68,11 @@ class Ui_MainWindow():
         self.altitude.setLabel("left", "Altitude (m)", color = "k")
         self.altitude.setLabel("bottom", "Time (s)", color = "k")
         self.altitude.showGrid(x=True, y=True)
+        
         # Code for live graph
         self.altitude.setYRange(0, 550)
         self.time = list(range(10))
-        self.alt_graph = [self.altitude_list[-1] for _ in range(10)] # THIS IS WHERE REAL DATA SHOULD GO
+        self.alt_graph = [self.altitude_list[-1] for _ in range(10)] 
         self.aline = self.altitude.plot(
             self.time,
             self.alt_graph,
@@ -94,10 +89,11 @@ class Ui_MainWindow():
         self.speed.setLabel("left", "Air Speed (m/s)", color = "k")
         self.speed.setLabel("bottom", "Time (s)", color = "k")
         self.speed.showGrid(x=True, y=True)
+        
         # Code for live graph
         self.speed.setYRange(0, 15)
         self.time = list(range(10))
-        self.speed_graph = [self.speed_list[-1] for _ in range(10)] # THIS IS WHERE REAL DATA SHOULD GO
+        self.speed_graph = [self.speed_list[-1] for _ in range(10)] 
         self.sline = self.speed.plot(
             self.time,
             self.speed_graph,
@@ -113,19 +109,19 @@ class Ui_MainWindow():
         self.tilt.setLabel("left", "Gyroscope (deg)", color = "k")
         self.tilt.setLabel("bottom", "Time (s)", color = "k")
         self.tilt.showGrid(x=True, y=True)
+        
         # Code for live graph
         self.tilt.setYRange(0, 100)
         self.time = list(range(10))
         self.roll = [self.roll_list[-1] for _ in range(10)]
         self.pitch = [self.pitch_list[-1] for _ in range(10)]
         self.yaw = [self.yaw_list[-1] for _ in range(10)]
-        # self.tilt.addLegend()
+        
+        # adding a legend
         self.tilt.addLegend(offset=(0,0))
-        legend = LegendItem()                      # you can pass size=(width,height)
+        legend = LegendItem()                      
         legend.setParentItem(self.tilt.graphicsItem()) 
-        # anchor the legend so it sits outside the plot area (top-right here)
-        legend.anchor((1, 0), (1, 0))                 # (legendCorner, targetCorner)
-        # plot on the PlotWidget
+        legend.anchor((1, 0), (1, 0))                
         self.roll_curve = self.tilt.plot(self.time, self.roll, pen='r', name='Gyro Roll')
         self.pitch_curve = self.tilt.plot(self.time, self.pitch, pen='g', name='Gyro Pitch')
         self.yaw_curve = self.tilt.plot(self.time, self.yaw, pen='b', name='Gyro Yaw')
@@ -140,10 +136,11 @@ class Ui_MainWindow():
         self.temperature.setLabel("left", "Temperature (°C)", color = "k")
         self.temperature.setLabel("bottom", "Time (s)", color = "k")
         self.temperature.showGrid(x=True, y=True)
+        
         # Code for live graph
         self.temperature.setYRange(0, 40)
         self.time = list(range(10))
-        self.temp_graph = [self.temperature_list[-1] for _ in range(10)] # THIS IS WHERE REAL DATA SHOULD GO
+        self.temp_graph = [self.temperature_list[-1] for _ in range(10)] 
         self.line = self.temperature.plot(self.time, self.temp_graph, pen=mkPen('k'))
 
         # pressure graph
@@ -156,10 +153,11 @@ class Ui_MainWindow():
         self.pressure.setLabel("left", "Pressure (kPa)", color = "k")
         self.pressure.setLabel("bottom", "Time (s)", color = "k")
         self.pressure.showGrid(x=True, y=True)
+        
         # Code for live graph
         self.pressure.setYRange(0, 100)
         self.time = list(range(10))
-        self.pressure_graph = [self.pressure_list[-1] for _ in range(10)] # THIS IS WHERE REAL DATA SHOULD GO
+        self.pressure_graph = [self.pressure_list[-1] for _ in range(10)] 
         self.pline = self.pressure.plot(
             self.time,
             self.pressure_graph,
@@ -167,13 +165,13 @@ class Ui_MainWindow():
         )
 
         # location widget as a folium map 
-        # coordinates of farm: 34.901034609560796, -86.6156509355818
-        self.latitude = [34.901034609560796] # change to get this from GPS
-        self.longitude = [-86.6156509355818] # change to get this from GPS
+        self.latitude = [34.901034609560796] 
+        self.longitude = [-86.6156509355818] 
         self.location_map = folium.Map(location = [self.latitude[0], self.longitude[0]], zoom_start=13)
-        self.icon = folium.CustomIcon('C:/Users/kayla/Python311/GCS/wheres_little_wing.png', icon_size = (36,30)) # may need to change icon to be more visible (b&w)
+        self.icon = folium.CustomIcon('C:/Users/kayla/Python311/GCS/wheres_little_wing.png', icon_size = (36,30)) 
         self.location_map = folium.Map(location = [self.latitude[0], self.longitude[0]], zoom_start = 13)
         folium.Marker(location = [self.latitude[0], self.longitude[0]], popup = 'Little Wing', icon = self.icon).add_to(self.location_map)    
+        
         # save map data to data object
         data = BytesIO()
         self.location_map.save(data,close_file = False)
@@ -198,12 +196,9 @@ class Ui_MainWindow():
         self.sloganLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.sloganLabel.setStyleSheet('color: white; font-weight: bold; font-family: Roc Grotesk; font-size: 30pt;')
         self.sloganLabel.setText("Wing-Stop Don't Stop! Go Little Wing!")
-        # trying to center the text in the label
 
         # creating button frame
         self.button_frame = QtWidgets.QFrame(self.centralwidget)
-        #self.button_frame.setGeometry(QtCore.QRect(46, 825, 491, 135))
-        #self.button_frame.setGeometry(QtCore.QRect(46, 825, 491, 155))
         self.button_frame.setGeometry(QtCore.QRect(512, 122, 1373, 100))
         self.button_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.button_frame.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -221,7 +216,7 @@ class Ui_MainWindow():
         self.beacon.setObjectName("beacon")
         self.button_layout.addWidget(self.beacon)
         self.beacon.setFont(self.button_font)
-        self.beacon.clicked.connect(self.start_serial_read) # ADD FUNCTION FOR WHEN BUTTON IS CLICKED
+        self.beacon.clicked.connect(self.start_serial_read) 
 
         # calibrate button
         self.calibrate = QtWidgets.QPushButton(self.button_frame)
@@ -229,8 +224,7 @@ class Ui_MainWindow():
         self.calibrate.setObjectName("calibrate")
         self.button_layout.addWidget(self.calibrate)
         self.calibrate.setFont(self.button_font)
-        self.calibrate.clicked.connect(self.calibrate_was_clicked) # ADD FUNCTION FOR WHEN BUTTON IS CLICKED
-        # set altitude to 0m (anything else?)
+        self.calibrate.clicked.connect(self.calibrate_was_clicked) 
 
         # release button
         self.release = QtWidgets.QPushButton(self.button_frame)
@@ -238,15 +232,13 @@ class Ui_MainWindow():
         self.release.setObjectName("release")
         self.button_layout.addWidget(self.release)
         self.release.setFont(self.button_font)
-        self.release.clicked.connect(self.release_was_clicked) # ADD FUNCTION FOR WHEN BUTTON IS CLICKED
-        # send message to xbee_payload that release requirements have been met?
+        self.release.clicked.connect(self.release_was_clicked) 
 
         # creating table for live data
         self.tableWidget = QtWidgets.QTableWidget(self.centralwidget)
         self.tableWidget.verticalHeader().setStyleSheet("""QHeaderView::section {font-size: 10pt; font-family: 'Roc Grotesk'; font-weight: bold; padding: 4px; }""")
         self.tableWidget.setStyleSheet('background color: white')
-        #self.tableWidget.setGeometry(QtCore.QRect(92, 218, 384, 578))
-        self.tableWidget.setGeometry(QtCore.QRect(36, 336, 450, 706)) # edited to make bigger
+        self.tableWidget.setGeometry(QtCore.QRect(36, 336, 450, 706)) 
         self.tableWidget.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         self.tableWidget.horizontalHeader().setStretchLastSection(True)
         self.tableWidget.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
@@ -262,9 +254,6 @@ class Ui_MainWindow():
         self.tableWidget.setStyleSheet("background-color : white")
         self.table_font = QtGui.QFont('Roc Grotesk', 12)
         self.table_font.setBold
-
-        # updating information
-        #self.update_information()
 
         # team ID
         item = QtWidgets.QTableWidgetItem()
@@ -356,7 +345,7 @@ class Ui_MainWindow():
         self.tableWidget.horizontalHeader().setVisible(False)
         self.tableWidget.horizontalHeader().setCascadingSectionResizes(False)
         
-        # THESE CURRENTLY HAVE NO FUNCTION FIGURE OUT IF THEY NEED TO FUNCTION
+        # Making menu and status bar
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1255, 26))
@@ -369,8 +358,7 @@ class Ui_MainWindow():
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    # determing what button names are
-    # determing what table row and column names are
+    # determing what names are
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Wing-Stop Ground Station"))
@@ -410,14 +398,14 @@ class Ui_MainWindow():
         item.setText(_translate("MainWindow", "Data"))
     
     # start serial button function
-    # HAVE DIEGO LOOK AT THIS BASED ON THE CODE CHANGES STEVEN MADE AND ASK IF IT SHOULD BE WHILE TRUE LOOP AGAIN
     def start_serial_read(self):
         self.start_serial_read = True
         print ('start serial was clicked')
         self.ser = serial.Serial('COM18', 9600, timeout = 2)
-        # timer to show readings for graphs NOT THE SAME AS MISSION TIME
+
+        # initializing timer
         self.timer = QtCore.QTimer()
-        self.timer.setInterval(300) # MAKE SURE THIS INTERVAL IS OK
+        self.timer.setInterval(300)
         self.timer.timeout.connect(self.update_widgets)
         self.timer.start()
         self.update_information()
@@ -436,19 +424,15 @@ class Ui_MainWindow():
             self.ser.write(self.release_string.encode('utf-8'))
         print('calibrate was clicked')
 
-    #breakpoint()
     # updating information lists
     def update_information(self):
-        #breakpoint()
-        print('function is running')
         with self.ser:
-            if self.start_serial_read == True: # this may not work but comment back in when we test with actual data    
+            if self.start_serial_read == True:    
                 print('serial read is started')  
                 data = self.ser.readline().decode('UTF-8', errors='ignore').strip()
-                #breakpoint()
+
                 # getting information into a single list
                 if data is not None:
-                    #breakpoint()
                     first_list = data.split(',,')
                     req_list = first_list[0]
                     our_list = first_list[1]
@@ -456,11 +440,9 @@ class Ui_MainWindow():
                     extra_list = our_list.split(',')
                     data_list.append(extra_list[0])
                     data_list.append(extra_list[1])
-                    #print(data_list)
 
                     # separating main data list into individual lists
                     if len(data_list) >= 15:
-                        #breakpoint()
                         self.team_list.append(int(data_list[0]))
                         self.mission_list.append(data_list[1])
                         self.packet_list.append(int(data_list[2]))
@@ -476,13 +458,9 @@ class Ui_MainWindow():
                         self.yaw_list.append(int(data_list[12]))
                         self.pressure_list.append(int(data_list[13]))
                         self.speed_list.append(int(data_list[14]))
-
-    # update live plots
-    #breakpoint()
+    
+    # function to update widgets
     def update_widgets(self):
-        # breakpoint()
-        # create lists for data to append to
-        # TEAM_ID, MISSION_TIME, PACKET_COUNT, SW_STATE, PL_STATE, ALTITUDE, TEMP, VOLTAGE, GPS_LATITUDE, GPS_LONGITUDE, GYRO_R, GYRO_P,  GYRO_Y,, PRESSURE, SPEED
 
         # update time
         self.time = self.time[1:]
@@ -526,9 +504,8 @@ class Ui_MainWindow():
         self.location_map.save(data, close_file=False)
         html = data.getvalue().decode()
         self.webView.setHtml(html)
-        # self.latitude.append(self.latitude[-1])
-        # self.longitude.append(self.longitude[-1])
 
+        # updating table values
         self.tableWidget.setItem(0, 0, QtWidgets.QTableWidgetItem(str(self.team_list[-1])))
         self.tableWidget.setItem(0, 1, QtWidgets.QTableWidgetItem(self.mission_list[-1]))
         self.tableWidget.setItem(0, 2, QtWidgets.QTableWidgetItem(str(self.packet_list[-1])))
@@ -543,18 +520,6 @@ class Ui_MainWindow():
         self.tableWidget.setItem(0, 11, QtWidgets.QTableWidgetItem(str(self.roll_list[-1])))
         self.tableWidget.setItem(0, 12, QtWidgets.QTableWidgetItem(str(self.pitch_list[-1])))
         self.tableWidget.setItem(0, 13, QtWidgets.QTableWidgetItem(str(self.yaw_list[-1])))
-    
-    # CSV packet format
-    # TEAM_ID(0), MISSION_TIME(1), PACKET_COUNT(2), SW_STATE(3), PL_STATE(4), ALTITUDE(5), TEMP(6), VOLTAGE(7), GPS_LATITUDE(8), GPS_LONGITUDE(9), 
-    # GYRO_R(10), GYRO_P(11),  GYRO_Y(12),, PRESSURE(13), SPEED(14)
-
-    # def start_serial(self):
-    #     self.ser = serial.Serial('COM13', 9600, timeout=2)
-    #     # call update_information every 200 ms
-    #     self.serial_timer = QtCore.QTimer()
-    #     self.serial_timer.timeout.connect(self.update_information)
-    #     self.serial_timer.start(200)
-
 
 # opening main window
 if __name__ == "__main__":
