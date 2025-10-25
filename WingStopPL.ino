@@ -26,7 +26,6 @@ File dataFile;
 
 int TEAMID = 5; 
 int PACKET_COUNT = 0;
-char SW_STATE[50] = "LAUNCH-READY";
 char PL_STATE = 'N';
 float ALTITUDE = 0;
 float TEMP = 0;
@@ -40,6 +39,16 @@ float PRESSURE = 0;
 float VELOCITY = 0;
 float SEALEVELPRESSURE_HPA = 1013.25;
 char command[67];
+enum SWSTATE {
+  LAUNCH_READY,
+  ASCENT,
+  SEPARATE,
+  DESCENT,
+  LANDED
+};
+SWSTATE SW_STATE = LAUNCH_READY;
+char SOFTWARE[50] = "LAUNCH_READY";
+
 
 uint16_t BNO055_SAMPLERATE_DELAY_MS = 100;
 sensors_event_t orientationData;
@@ -130,7 +139,7 @@ void takeCommand(){
     }
 
     if (strcmp(command, "lemon pepper") == 0){
-      SW_STATE == "SEPARATE";
+      SW_STATE = SEPARATE;
       Servo1.write(180);
     }
     else if (strcmp(command, "hot honey") == 0){
@@ -157,19 +166,23 @@ void takeData(){
 }
 
 void changeState(){
-  if ((strcmp(SW_STATE, "LAUNCH-READY") == 0) && ALTITUDE >= 10){
-    SW_STATE == "ASCENT"; //Add Mission start here
+  if ((SW_STATE == LAUNCH_READY) && ALTITUDE >= 10){
+    SW_STATE = ASCENT; //Add Mission start here
+    SOFTWARE == "LAUNCH-READY";
   }
-  else if ((strcmp(SW_STATE, "ASCENT") == 0) && ALTITUDE >= 490){
-    SW_STATE == "SEPARATE"; 
+  else if ((SW_STATE == ASCENT) && ALTITUDE >= 490){
+    SW_STATE = SEPARATE; 
+    SOFTWARE == "SEPARATE";
     Servo1.write(180); 
     PL_STATE = 'R' ;
   }
-  else if ((strcmp(SW_STATE, "SEPARATE") == 0) && ALTITUDE <490){
-    SW_STATE == "DESCENT";
+  else if ((SW_STATE == SEPARATE) && ALTITUDE <490){
+    SW_STATE = DESCENT;
+    SOFTWARE == "DESCENT";
   }
-  else if ((strcmp(SW_STATE, "DESCENT") == 0) && ALTITUDE <10){
-    SW_STATE == "LANDED";
+  else if ((SW_STATE == DESCENT) && ALTITUDE <10){
+    SW_STATE = LANDED;
+    SOFTWARE == "LANDED";
     digitalWrite(Buzzer, HIGH);
     digitalWrite(LED, HIGH);
   }
@@ -183,7 +196,7 @@ void sendData(){
   char SPRING_TIME[25];
   sprintf(SPRING_TIME, "%02ld:%02ld:%02ld.%02ld", (RUNTIME / (1000*60*60)) %100, (RUNTIME / (1000*60)) %60, (RUNTIME / 1000) %60);
   char XbeeString[500];
-  sprintf(XbeeString, "%i,%s,%i,%s,%c,%.2f,%.2f,%.1f,%.4f,%.4f,%.2f,%.2f,%.2f,,%.2f,%.5f",TEAMID,SPRING_TIME,PACKET_COUNT,SW_STATE,PL_STATE,ALTITUDE,TEMP,VOLTAGE,LAT,LONG,GYRO_R,GYRO_P,GYRO_Y,PRESSURE,VELOCITY);
+  sprintf(XbeeString, "%i,%s,%i,%s,%c,%.2f,%.2f,%.1f,%.4f,%.4f,%.2f,%.2f,%.2f,,%.2f,%.5f",TEAMID,SPRING_TIME,PACKET_COUNT,SOFTWARE,PL_STATE,ALTITUDE,TEMP,VOLTAGE,LAT,LONG,GYRO_R,GYRO_P,GYRO_Y,PRESSURE,VELOCITY);
   Serial1.println (XbeeString);
   Serial2.println (XbeeString);
   dataFile.println (XbeeString);
