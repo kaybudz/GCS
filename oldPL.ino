@@ -47,7 +47,7 @@ enum SWSTATE {
   LANDED
 };
 SWSTATE SW_STATE = LAUNCH_READY;
-const char *SOFTWARE = "LAUNCH_READY";
+char SOFTWARE[50] = "LAUNCH_READY";
 
 
 uint16_t BNO055_SAMPLERATE_DELAY_MS = 100;
@@ -168,7 +168,7 @@ void takeData(){
 void changeState(){
   if ((SW_STATE == LAUNCH_READY) && ALTITUDE >= 10){
     SW_STATE = ASCENT; //Add Mission start here
-    SOFTWARE == "ASCENT";
+    SOFTWARE == "LAUNCH-READY";
   }
   else if ((SW_STATE == ASCENT) && ALTITUDE >= 490){
     SW_STATE = SEPARATE; 

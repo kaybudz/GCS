@@ -9,6 +9,7 @@ from offline_folium import offline
 import folium
 from io import BytesIO
 import serial
+import csv
 
 # creating main window for ground station
 class Ui_MainWindow():
@@ -446,6 +447,7 @@ class Ui_MainWindow():
     
     # start serial button function
     def start_serial_read(self):
+        self.beacon.setStyleSheet("background-color : brown")
         self.start_serial_read = True
         print ('start serial was clicked')
         self.ser = serial.Serial('COM13', 9600, timeout = 2)
@@ -456,7 +458,6 @@ class Ui_MainWindow():
         self.timer.timeout.connect(self.update_widgets)
         self.timer.start()
         self.update_information()
-        self.beacon.setStyleSheet("background-color : brown")
 
     # release button function
     def release_was_clicked(self):
@@ -481,11 +482,13 @@ class Ui_MainWindow():
     # updating information lists
     def update_information(self):
         with self.ser:
-            if self.start_serial_read == True:    
+            if self.start_serial_read == True:   
+                #print('reading') 
                 data = self.ser.readline().decode('UTF-8', errors='ignore').strip()
 
                 # getting information into a single list
                 if data is not None:
+                    #print('data')
                     first_list = data.split(',,')
                     req_list = first_list[0]
                     our_list = first_list[1]
@@ -493,10 +496,14 @@ class Ui_MainWindow():
                     extra_list = our_list.split(',')
                     data_list.append(extra_list[0])
                     data_list.append(extra_list[1])
+                    with open("WingStop.csv", mode = 'a', newline = '') as file:
+                        writer = csv.writer(file)
+                        writer.writerow(data_list)
 
                     # separating main data list into individual lists
                     if len(data_list) >= 15:
-                        print('data is updating')
+                        #print(data_list)
+                        #print('data is updating')
                         self.team_list.append(int(data_list[0]))
                         self.mission_list.append(data_list[1])
                         self.packet_list.append(int(data_list[2]))
@@ -515,6 +522,7 @@ class Ui_MainWindow():
     
     # function to update widgets
     def update_widgets(self):
+        #print('updating')
 
         # update information
         self.update_information()
@@ -566,9 +574,9 @@ class Ui_MainWindow():
         self.tableWidget.setItem(0, 0, QtWidgets.QTableWidgetItem(str(self.team_list[-1])))
         self.tableWidget.setItem(0, 1, QtWidgets.QTableWidgetItem(self.mission_list[-1]))
         self.tableWidget.setItem(0, 2, QtWidgets.QTableWidgetItem(str(self.packet_list[-1])))
-        self.tableWidget.setItem(0, 3, QtWidgets.QTableWidgetItem('0'))
-        self.tableWidget.setItem(0, 4, QtWidgets.QTableWidgetItem(self.sw_list[-1]))
-        self.tableWidget.setItem(0, 5, QtWidgets.QTableWidgetItem(self.pl_list[-1]))
+        self.tableWidget.setItem(0, 3, QtWidgets.QTableWidgetItem(self.sw_list[-1]))
+        self.tableWidget.setItem(0, 4, QtWidgets.QTableWidgetItem(self.pl_list[-1]))
+        self.tableWidget.setItem(0, 5, QtWidgets.QTableWidgetItem(str(self.speed_list[-1])))
         self.tableWidget.setItem(0, 6, QtWidgets.QTableWidgetItem(str(self.altitude_list[-1])))
         self.tableWidget.setItem(0, 7, QtWidgets.QTableWidgetItem(str(self.temperature_list[-1])))
         self.tableWidget.setItem(0, 8, QtWidgets.QTableWidgetItem(str(self.voltage_list[-1])))
