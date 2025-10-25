@@ -20,11 +20,11 @@
 Adafruit_BMP3XX BMP;
 SFE_UBLOX_GNSS GPS;
 Adafruit_BNO055 BNO;
-Servo Servo;
+Servo Servo1;
 
 int TEAMID = 5; 
 int PACKET_COUNT = 0;
-char SW_STATE[13] = "LAUNCH-READY";
+char SW_STATE[50] = "LAUNCH-READY";
 char PL_STATE = 'N';
 float ALTITUDE = 0;
 float TEMP = 0;
@@ -103,7 +103,7 @@ void setup (){
   Serial2.begin (9600);
   Serial.println("(datalogger start)");
 
-  Servo.attach(ServoPin);
+  Servo1.attach(ServoPin);
 
   pinMode(Buzzer, OUTPUT);
   digitalWrite(Buzzer, LOW);
@@ -134,11 +134,11 @@ void changeState(){
     SW_STATE == "ASCENT"; //Add Mission start here
   }
   else if ((strcmp(SW_STATE, "ASCENT") == 0) && ALTITUDE >= 490){
-    SW_STATE == "SEPERATE"; 
-    Servo.write(180); 
+    SW_STATE == "SEPARATE"; 
+    Servo1.write(180); 
     PL_STATE = 'R' ;
   }
-  else if ((strcmp(SW_STATE, "SEPERATE") == 0) && ALTITUDE <490){
+  else if ((strcmp(SW_STATE, "SEPARATE") == 0) && ALTITUDE <490){
     SW_STATE == "DESCENT";
   }
   else if ((strcmp(SW_STATE, "DESCENT") == 0) && ALTITUDE <10){
@@ -156,7 +156,7 @@ void sendData(){
   char SPRING_TIME[25];
   sprintf(SPRING_TIME, "%02ld:%02ld:%02ld.%02ld", (RUNTIME / (1000*60*60)) %100, (RUNTIME / (1000*60)) %60, (RUNTIME / 1000) %60);
   char XbeeString[500];
-  sprintf(XbeeString, "%i,%s,%i,%c,%c,%.2f,%.2f,%.1f,%.4f,%.4f,%.2f,%.2f,%.2f,,%.2f,%.5f",TEAMID,SPRING_TIME,PACKET_COUNT,SW_STATE,PL_STATE,ALTITUDE,TEMP,VOLTAGE,LAT,LONG,GYRO_R,GYRO_P,GYRO_Y,PRESSURE,VELOCITY);
+  sprintf(XbeeString, "%i,%s,%i,%s,%c,%.2f,%.2f,%.1f,%.4f,%.4f,%.2f,%.2f,%.2f,,%.2f,%.5f",TEAMID,SPRING_TIME,PACKET_COUNT,SW_STATE,PL_STATE,ALTITUDE,TEMP,VOLTAGE,LAT,LONG,GYRO_R,GYRO_P,GYRO_Y,PRESSURE,VELOCITY);
   Serial1.println (XbeeString);
   Serial2.println (XbeeString);
 }
