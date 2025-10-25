@@ -112,6 +112,7 @@ void setup (){
   }
 
   Servo1.attach(ServoPin);
+  Servo1.write(0);
 
   pinMode(Buzzer, OUTPUT);
   digitalWrite(Buzzer, LOW);
